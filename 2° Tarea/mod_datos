@@ -1,0 +1,70 @@
+#!/bin/bash
+
+function mod() { clear
+    while [ "$mod" != 6 ]; do
+        echo "===================================="
+        echo "|=| 1. Modificar/Agregar ip      |=|"
+        echo "|=| 2. Modificar/Agregar DNS     |=|"
+        echo "|=| 3. Modificar/Agregar gateway |=|"
+        echo "|=| 4. Modificar/Agregar Mascara |=|"
+        echo "|=| 5. Copia de seguridad        |=|"
+        echo "|=| 6. Volver                    |=|"
+        echo "===================================="
+        read -r -p "=> " mod
+        echo
+
+        case "$mod" in
+            1)
+                echo "IP del dispositivo: $(hostname -i)"
+                read -r -p "Nueva IP => " ip
+                echo "IP: " "$ip" >> /etc/netplan/01-network-manager-all.yaml
+                echo           
+            ;;
+
+            2)
+                read -r -p "Nueva DNS => " DNS
+                echo "DNS: " "$DNS" >> /etc/netplan/01-network-manager-all.yaml
+                echo
+            ;;
+
+            3)
+                read -r -p "Nuevo gateway => " gateway
+                echo "gateway: " "$gateway" >> /etc/netplan/01-network-manager-all.yaml
+                echo
+            ;;
+
+            4)
+                read -r -p "Nueva Mascara de sub red => " Mascara
+                echo "Mascara: " "$Mascara" >> /etc/netplan/01-network-manager-all.yaml
+                echo
+            ;;
+
+            5)
+                echo "[ Creando copia de seguridad... ]"
+                echo
+                sleep 1s
+                cp /etc/netplan/01-network-manager-all.yaml /home/"$USER"/Escritorio
+                echo "[ Se ha creado con exito la copia ]"
+                sleep 0.5s
+                [ "$mod" = true ]
+            break;;
+            
+            6)
+                unset "$mod"
+                ( exec "./scan2.0.sh" )
+            break;;
+
+            *)
+                clear
+                echo
+                echo -e "\033[4;35mNo es una opcion lo que intentas\e[0m"
+                echo
+                sleep 2s
+                clear
+                [ "$mod" = true ]
+            ;;
+        esac 
+    done
+}
+
+mod
